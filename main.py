@@ -3,41 +3,60 @@ Brandon Gant
 Created: 2020-06-09
 Updated: 2021-11-15
 
-Tested with:
+### Tested with:
     Espressif ESP32-PICO-KIT_V4.1 board with ESP32-PICO-D4 chip 
     SparkFun Thing
     TinyPICO
 
-Sensors:
+### Sensors:
     Milone Standard eTape assembly / 18-inch / Voltage divider / PN 12110215TC-AH
+    Analog Devices TMP36
+    SparkFun TMP102
+    DHT22
 
-ESP32 Configuration:
-   esptool.py --chip esp32 --port /dev/ttyUSB0 erase_flash
-   esptool.py --chip esp32 --port /dev/ttyUSB0 --baud 460800 write_flash -z 0x1000 esp32-idf3-20200902-v1.13.bin
-   mpfshell
-   open ttyUSB0
+### Software Installation:
+mkdir ~/micropython-setup
+cd ~/micropython-setup
 
-   repl
-   import os
-   os.umount('/')
-   os.VfsLfs2.mkfs(bdev)  <-- Replace easily corrupted FAT filesystem with Littlefs
-   os.mount(bdev, '/')
-   Ctrl+]
+python3 -m pip install pyvenv
+python3 -m venv micropython-env
+source micropython-env/bin/activate
+python3 -m pip list | egrep -v "Package|----" | awk '{print $1}' | xargs -I {} python3 -m pip install --upgrade {}
+python3 -m pip install esptool
+python3 -m pip install mpremote
+sudo usermod -aG `stat -c "%G" /dev/ttyUSB0` $USER  <-- May need to reboot PC
+mpremote connect /dev/ttyUSB0                       <-- test connection / Ctrl-] to exit
 
-   put boot_with_wifi.py boot.py
-   put key_store.py
+wget https://micropython.org/resources/firmware/tinypico-20210902-v1.17.bin
+esptool.py --chip esp32 --port /dev/ttyUSB0 erase_flash
+esptool.py --chip esp32 --port /dev/ttyUSB0 --baud 460800 write_flash -z 0x1000 tinypico-20210902-v1.17.bin
 
-   put main_influxdb.py main.py    
-   put client_id.py
-   put urequests.py     <-- If TinyPICO
-   put TinyPICO_RGB.py  <-- If TinyPICO
+wget https://github.com/micropython/micropython-lib/raw/master/python-ecosys/urequests/urequests.py
+mpremote u0 cp urequests.py :   <-- ESP32 has this module built-in but TinyPICO does not
 
-   put Milone_eTape.py  --OR-- AnalogDevices_TMP36.py --OR-- SparkFun_TMP102.py --OR-- DHT22.py
+git clone https://github.com/bgant/micropython-wifi
+cd micropython-wifi/
+mpremote u0 cp key_store.py :
+mpremote u0 cp client_id.py :
+mpremote u0 cp TinyPICO_RGB.py :
+mpremote u0 cp boot.py :
+mpremote u0 <-- to enter REPL
+from machine import reset
+reset()
+<enter your Wifi SSID and Password and make sure it connects>
+<if you made a mistake run import key_store and key_store.init() to change SSID and Password>
+<Ctrl+] to exit REPL>
 
-   repl 
-   from machine import reset
-   reset()
+cd ../
+git clone https://github.com/bgant/micropython-influxdb
+cd micropython-influxdb/
+mpremote u0 cp Milone_eTape.py :   <--  AnalogDevices_TMP36.py / SparkFun_TMP102.py / DHT22.py
+mpremote u0 cp main.py :
+
+mpremote u0  <-- to enter REPL
+reset()   <-- boot.py and main.py should run
 '''
+
 
 #---------------
 # Import Modules
@@ -120,6 +139,7 @@ if key_store.get('jwt') is None:
     key_store.set('jwt', input('Enter JSON Web Token (JWT) - '))
 headers['Authorization'] = 'Bearer %s' % key_store.get('jwt')
 
+
 #------------------------------------------------------------
 # Create database if it does not already exist
 #    WARNING: This only works without InfluxDB authentication
@@ -190,6 +210,7 @@ else:
     print()
     wdt = WDT(timeout=86400000)  # Watchdog Timer cannot be disabled, so set to expire in 1 day
     exit(1)
+
 
 #--------------------------------
 # Print some helpful information:
