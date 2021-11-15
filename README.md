@@ -1,4 +1,4 @@
-# Sending sensor data to InfluxDB database from Micropython devices
+# Sending Micropython data to InfluxDB
 
 After setting up a some sensors and doing data collection first with MQTT and later with custom Python Flask HTTP calls, I settled on sending the data to an InfluxDB time series database so that I could view the data in pretty Grafana graphs.
 
