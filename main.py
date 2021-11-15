@@ -26,7 +26,6 @@ ESP32 Configuration:
 
    put boot_with_wifi.py boot.py
    put key_store.py
-   put soft_wdt.py
 
    put main_influxdb.py main.py    
    put client_id.py
@@ -47,9 +46,11 @@ ESP32 Configuration:
 # Built-in Modules
 from machine import reset, WDT
 from time import sleep
-from uos import uname,listdir
+from uos import uname, listdir
 from sys import exit
 import gc
+
+wdt = WDT(timeout=600000)  # Set 10-minute Hardware Watchdog Timer
 
 # Downloaded Modules
 import urequests
@@ -71,24 +72,18 @@ if key_store.get('influxdb') is None:
     key_store.set('influxdb', input('Enter InfluxDB server:port:database:measurement - '))
 server,port,database,measurement = key_store.get('influxdb').split(':')
 
-#-------------------------------------
 # Get Sleep Interval from key_store.db
-#-------------------------------------
 if key_store.get('sleep_interval') is None:
     key_store.set('sleep_interval', input('How many seconds between sensor reads - '))
 sleep_interval = int(key_store.get('sleep_interval')) 
 
-#----------------------------
 # Set URL for Database Writes
-#----------------------------
 if '443' in port:
     url = 'https://%s/influx/write?db=%s' % (server,database)
 else:
     url = 'http://%s:%s/write?db=%s' % (server,port,database)
 
-#-------------------------------------------
 # Set JSON Web Token (JWT) from key_store.db
-#-------------------------------------------
 #
 # If you enabled authentication in InfluxDB you need
 # to create a JSON Web Token to write to a database:
@@ -116,7 +111,6 @@ else:
 #
 # Source: https://docs.influxdata.com/influxdb/v1.8/administration/authentication_and_authorization/
 #
-
 headers = {
     'Content-type': 'application/x-www-form-urlencoded',
     'Authorization': ''
@@ -194,7 +188,7 @@ elif 'AnalogDevices_TMP36.py' in listdir():
 else:
     print('Missing Sensor Module... Exiting main.py')
     print()
-    wdt_feed(WDT_CANCEL)  # Cancel/Disable Watchdog Timer
+    wdt = WDT(timeout=86400000)  # Watchdog Timer cannot be disabled, so set to expire in 1 day
     exit(1)
 
 #--------------------------------
@@ -237,10 +231,10 @@ def main():
 while True:
     try:
         main()
-        #wdt_feed(sleep_interval * 10)  # Keep Watchdog Timer from resetting device for 2x sleep_interval
+        wdt.feed()  # Reset Hardware Watchdog Timer
         sleep(sleep_interval)
     except KeyboardInterrupt:
-        #wdt_feed(WDT_CANCEL)  # Cancel/Disable Watchdog Timer when Ctrl+C pressed
+        wdt = WDT(timeout=86400000)  # Watchdog Timer cannot be disabled, so set to expire in 1 day
         exit()
     except:
         sleep(sleep_interval)
