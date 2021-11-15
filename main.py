@@ -71,6 +71,11 @@ import gc
 
 wdt = WDT(timeout=600000)  # Set 10-minute Hardware Watchdog Timer
 
+# A chance to hit Ctrl+C in REPL for Debugging
+print('main.py: Press CTRL+C to enter REPL...')
+print()
+sleep(2)
+
 # Downloaded Modules
 import urequests
 import key_store
