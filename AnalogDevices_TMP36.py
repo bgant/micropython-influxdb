@@ -1,20 +1,20 @@
-#
-# Brandon Gant
-# Created: 2019-12-18
-# Updated: 2020-09-24
-#
-# temp_celsius = (millivolts - 500) / 10  # Example: 25C = (750mV - 500) / 10
-# temp_fahrenheit = (temp_celsius * 9/5) + 32
-#
-# Calibration Data:
-#    According to Datasheet:
-#         750mV should be  25C /  77F 
-#         100mV should be -40C / -40F 
-#    Long Probe measured datapoints:
-#        AnalogDevices_TMP36.temp_calibrated(32,1350,1702,59.7,82.5)
-#    Short Probe measured datapoints:
-#        AnalogDevices_TMP36.temp_calibreated(32,1430,1784,59.5,74.3)
-#
+'''
+Brandon Gant
+Created: 2019-12-18
+Updated: 2020-09-24
+
+temp_celsius = (millivolts - 500) / 10  # Example: 25C = (750mV - 500) / 10
+temp_fahrenheit = (temp_celsius * 9/5) + 32
+
+Calibration Data:
+   According to Datasheet:
+        750mV should be  25C /  77F 
+        100mV should be -40C / -40F 
+   Long Probe measured datapoints:
+       AnalogDevices_TMP36.temp_calibrated(32,1350,1702,59.7,82.5)
+   Short Probe measured datapoints:
+       AnalogDevices_TMP36.temp_calibreated(32,1430,1784,59.5,74.3)
+'''
 
 from sys import exit
 from machine import ADC
@@ -78,3 +78,4 @@ def range_map(x, in_min, in_max, out_min, out_max):
 def temp_calibrated(gpio_pin_number,adc_min,adc_max,temp_min,temp_max):
     '''Use external accurate Temperature device to measure high/low ADC and Temperature values to calibrate sensor.'''
     return range_map(read_adc_average(gpio_pin_number),in_min=adc_min,in_max=adc_max,out_min=temp_min,out_max=temp_max)
+

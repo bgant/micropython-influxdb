@@ -1,6 +1,8 @@
-# Brandon Gant
-# Created: 2020-08-11
-# Updated: 2020-09-09
+'''
+Brandon Gant
+Created: 2020-08-11
+Updated: 2020-09-09
+'''
 
 from machine import Pin,ADC
 from time import sleep

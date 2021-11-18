@@ -1,9 +1,9 @@
-#
-# Brandon Gant
-# Created: 2020-10-05
-#
-# DHT22 temperature/humidity sensor (any GPIO pin should work)
-#
+'''
+Brandon Gant
+Created: 2020-10-05
+
+DHT22 temperature/humidity sensor (any GPIO pin should work)
+'''
 
 import dht
 from machine import Pin

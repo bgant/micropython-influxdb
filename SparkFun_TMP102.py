@@ -1,20 +1,21 @@
-# SparkFun TMP102:      https://www.sparkfun.com/products/13314
-# SparkFun ESP32 Thing: https://www.sparkfun.com/products/13907
-# MicroPython:          https://docs.micropython.org/en/latest/
-# Source Tutorial:
-#    https://learn.sparkfun.com/tutorials/micropython-programming-tutorial-getting-started-with-the-esp32-thing
-#
-# Brandon Gant
-# 2019-02-11
-#
-# Usage:
-#    import SparkFun_TMP102 as tmp102
-#    tmp102.read_temp()
-#    tmp102.read_temp('F')
-#    tmp102.reset()
-#
-# This module just gets a reading from the temperature sensor.
-# 
+'''
+SparkFun TMP102:      https://www.sparkfun.com/products/13314
+SparkFun ESP32 Thing: https://www.sparkfun.com/products/13907
+MicroPython:          https://docs.micropython.org/en/latest/
+Source Tutorial:
+   https://learn.sparkfun.com/tutorials/micropython-programming-tutorial-getting-started-with-the-esp32-thing
+
+Brandon Gant
+Created: 2019-02-11
+
+Usage:
+   import SparkFun_TMP102 as tmp102
+   tmp102.read_temp()
+   tmp102.read_temp('F')
+   tmp102.reset()
+
+This module just gets a reading from the temperature sensor.
+'''
 
 import machine
 

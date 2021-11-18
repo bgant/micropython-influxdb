@@ -14,7 +14,7 @@ Updated: 2021-11-15
     SparkFun TMP102
     DHT22
 
-### Software Installation:
+### Software Installation on Linux:
 mkdir ~/micropython-setup
 cd ~/micropython-setup
 
@@ -58,9 +58,9 @@ reset()   <-- boot.py and main.py should run
 '''
 
 
-#---------------
+#-----------------
 # Import Modules
-#---------------
+#-----------------
 
 # Built-in Modules
 from machine import reset, WDT
@@ -87,10 +87,10 @@ if 'TinyPICO' in uname().machine:
     led.off()
 
 
-#----------------------------------------------------------------
+#------------------------------------------------------------------
 # Get InfluxDB server:port:database:measurement from key_store.db
 #   i.e. influxdb.localdomain:8086:Garage:DHT22
-#----------------------------------------------------------------
+#------------------------------------------------------------------
 if key_store.get('influxdb') is None:
     print('Need to add settings to key_store.db...')
     key_store.set('influxdb', input('Enter InfluxDB server:port:database:measurement - '))
@@ -145,10 +145,10 @@ if key_store.get('jwt') is None:
 headers['Authorization'] = 'Bearer %s' % key_store.get('jwt')
 
 
-#------------------------------------------------------------
+#--------------------------------------------------------------
 # Create database if it does not already exist
 #    WARNING: This only works without InfluxDB authentication
-#------------------------------------------------------------
+#--------------------------------------------------------------
 if key_store.get('jwt') is '':
     def create_database():
         # Using a function to avoid overwriting variables above with same names
@@ -169,9 +169,9 @@ if key_store.get('jwt') is '':
     print()
 
 
-#---------------------------
+#-----------------------------
 # Which Sensor are we using?
-#---------------------------
+#-----------------------------
 if key_store.get('SENSOR_PIN') is None:
     key_store.set('SENSOR_PIN', input('Enter Sensor Pin Number - '))
 SENSOR_PIN = int(key_store.get('SENSOR_PIN'))
@@ -217,9 +217,9 @@ else:
     exit(1)
 
 
-#--------------------------------
+#----------------------------------
 # Print some helpful information:
-#--------------------------------
+#----------------------------------
 print()
 print('Sensor:          %s' % sensor)
 print('Sensor Pin:      %s' % SENSOR_PIN)
@@ -232,6 +232,10 @@ print()
 print('=' * 45)
 print()
 
+
+#-------------------
+# Define Functions
+#-------------------
 
 def main():
     gc.collect()  # Loop runs device out of memory without this
@@ -253,6 +257,9 @@ def main():
         sleep(sleep_interval)
         reset()
 
+#------------
+# Main Loop
+#------------
 
 while True:
     try:

@@ -1,18 +1,19 @@
-# Milone Technologies:  https://milonetech.com/products/standard-etape-assembly
-# Micropython:          https://docs.micropython.org/en/latest/esp32/quickref.html#adc-analog-to-digital-conversion
-#
-# Brandon Gant
-# 2020-06-08
-#
-# Sump Pit Level:
-# This script uses a Milone eTape with Volage Divider to monitor the level 
-# of water in a home sump pit.
-#
-# Pinout:
-#    Red   --> 3.3V
-#    Black --> GND
-#    White --> GPIO32  (any ADC pin 32-39 should work)
-#
+'''
+Milone Technologies:  https://milonetech.com/products/standard-etape-assembly
+Micropython:          https://docs.micropython.org/en/latest/esp32/quickref.html#adc-analog-to-digital-conversion
+
+Brandon Gant
+Created: 2020-06-08
+
+Sump Pit Level:
+This script uses a Milone eTape with Volage Divider to monitor the level 
+of water in a home sump pit.
+
+Pinout:
+   Red   --> 3.3V
+   Black --> GND
+   White --> GPIO32  (any ADC pin 32-39 should work)
+'''
 
 from time import sleep 
 from machine import Pin, ADC
